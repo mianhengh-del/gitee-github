@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>代码平台跳转工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #121212;
+                color: #e0e0e0;
+            }
+            .btn {
+                background-color: #3a3a3a;
+                color: #fff;
+            }
+            .btn:hover {
+                background-color: #4f4f4f;
+            }
+            .btn-gitee {
+                background-color: #c71d23;
+            }
+            .btn-gitee:hover {
+                background-color: #a5181e;
+            }
+            .btn-github {
+                background-color: #333;
+            }
+            .btn-github:hover {
+                background-color: #000;
+            }
+            .btn-custom {
+                background-color: #2f4fff;
+            }
+            .btn-custom:hover {
+                background-color: #1a36ff;
+            }
+            input {
+                background-color: #2c2c2c;
+                color: #e0e0e0;
+                border: 1px solid #444;
+            }
+            .status-text, .tip-text {
+                color: #aaa;
+            }
+            .divider {
+                background-color: #333;
+            }
+            .btn-delete {
+                background-color: #d94545;
+            }
+            .btn-delete:hover {
+                background-color: #c0392b;
+            }
+            .custom-item {
+                border: 1px solid #444;
+            }
+        }
+        .container {
+            width: 100%;
+            max-width: 350px;
+        }
+        .title {
+            font-size: 22px;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .status-icon {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .online {
+            background-color: #4cd964;
+        }
+        .offline {
+            background-color: #ff3b30;
+        }
+        .status-text {
+            color: #666;
+        }
+        .btn {
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-decoration: none;
+            font-size: 18px;
+            transition: background 0.3s;
+            display: block;
+        }
+        .btn-gitee {
+            background-color: #c71d23;
+            color: white;
+        }
+        .btn-github {
+            background-color: #333;
+            color: white;
+        }
+        .divider {
+            margin: 30px 0;
+            width: 100%;
+            height: 1px;
+            background-color: #ddd;
+        }
+        .section-title {
+            font-size: 16px;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        .input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        input {
+            flex: 1;
+            height: 40px;
+            padding: 0 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            outline: none;
+        }
+        input:focus {
+            border-color: #2f4fff;
+        }
+        .btn-add, .btn-copy {
+            height: 40px;
+            line-height: 40px;
+            font-size: 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+        }
+        .btn-add {
+            width: 80px;
+            background-color: #2f4fff;
+        }
+        .btn-copy {
+            width: 100%;
+            margin: 5px 0;
+            background-color: #4cd964;
+        }
+        .btn-copy:hover {
+            background-color: #3bc853;
+        }
+        .repo-copy {
+            margin: 20px 0;
+        }
+        .tip-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            min-height: 16px;
+        }
+        .custom-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .btn-custom {
+            flex: 1;
+            margin: 0;
+            border-radius: 0;
+            background-color: #2f4fff;
+            color: white;
+        }
+        .btn-delete {
+            width: 50px;
+            height: 60px;
+            border: none;
+            background-color: #ff3b30;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn-delete:hover {
+            background-color: #e03025;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">代码平台跳转工具</h1>
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="status-icon" id="gitee-status"></span>
+                <span class="status-text">Gitee</span>
+            </div>
+            <div class="status-item">
+                <span class="status-icon" id="github-status"></span>
+                <span class="status-text">GitHub</span>
+            </div>
+        </div>
+        <a href="https://gitee.com" class="btn btn-gitee" target="_blank">前往 Gitee</a>
+        <a href="https://github.com" class="btn btn-github" target="_blank">前往 GitHub</a>
+        <div class="divider"></div>
+        <div class="custom-platform">
+            <h2 class="section-title">添加自定义平台</h2>
+            <div class="input-group">
+                <input type="text" id="platform-name" placeholder="平台名称（如GitLab）">
+                <input type="text" id="platform-url" placeholder="平台网址（带https）">
+            </div>
+            <button class="btn-add" onclick="addCustomPlatform()">添加</button>
+            <div id="custom-buttons-container"></div>
+        </div>
+        <div class="divider"></div>
+        <div class="repo-copy">
+            <h2 class="section-title">一键复制仓库链接</h2>
+            <div class="input-group">
+                <input type="text" id="username" placeholder="用户名">
+                <input type="text" id="reponame" placeholder="仓库名">
+            </div>
+            <button class="btn-copy" onclick="copyRepoLink('gitee')">复制 Gitee 仓库链接</button>
+            <button class="btn-copy" onclick="copyRepoLink('github')">复制 GitHub 仓库链接</button>
+            <p class="tip-text" id="copy-tip"></p>
+        </div>
+    </div>
+    <script>
+        async function checkConnectivity(url, statusId) {
+            const icon = document.getElementById(statusId);
+            try {
+                await fetch(url, { method: 'HEAD', mode: 'no-cors', timeout: 5000 });
+                icon.classList.add('online');
+            } catch (err) {
+                icon.classList.add('offline');
+            }
+        }
+        window.onload = () => {
+            checkConnectivity('https://gitee.com', 'gitee-status');
+            checkConnectivity('https://github.com', 'github-status');
+            loadCustomPlatforms();
+        };
+        function addCustomPlatform() {
+            const name = document.getElementById('platform-name').value.trim();
+            const url = document.getElementById('platform-url').value.trim();
+            if (!name || !url) {
+                alert('请填写完整的平台名称和网址！');
+                return;
+            }
+            if (!url.startsWith('https://')) {
+                alert('网址请以 https:// 开头！');
+                return;
+            }
+            let platforms = JSON.parse(localStorage.getItem('customPlatforms') || '[]');
+            if (!platforms.some(item => item.url === url)) {
+                platforms.push({ name, url });
+                localStorage.setItem('customPlatforms', JSON.stringify(platforms));
+                renderCustomButtons();
+                alert(`✅ 已添加 ${name}！`);
+            } else {
+                alert('该平台已添加！');
+            }
+            document.getElementById('platform-name').value = '';
+            document.getElementById('platform-url').value = '';
+        }
+        function loadCustomPlatforms() {
+            renderCustomButtons();
+        }
+        function renderCustomButtons() {
+            const container = document.getElementById('custom-buttons-container');
+            container.innerHTML = '';
+            const platforms = JSON.parse(localStorage.getItem('customPlatforms') || '[]');
+            platforms.forEach(item => {
+                const itemContainer = document.createElement('div');
+                itemContainer.className = 'custom-item';
+                const btn = document.createElement('a');
+                btn.href = item.url;
+                btn.className = 'btn btn-custom';
+                btn.target = '_blank';
+                btn.textContent = `前往 ${item.name}`;
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'btn-delete';
+                deleteBtn.textContent = '×';
+                deleteBtn.onclick = () => deleteCustomPlatform(item.url);
+                itemContainer.appendChild(btn);
+                itemContainer.appendChild(deleteBtn);
+                container.appendChild(itemContainer);
+            });
+        }
+        function deleteCustomPlatform(targetUrl) {
+            let platforms = JSON.parse(localStorage.getItem('customPlatforms') || '[]');
+            const newPlatforms = platforms.filter(item => item.url !== targetUrl);
+            localStorage.setItem('customPlatforms', JSON.stringify(newPlatforms));
+            renderCustomButtons();
+            alert('✅ 已删除该平台！');
+        }
+        function copyRepoLink(type) {
+            const username = document.getElementById('username').value.trim();
+            const reponame = document.getElementById('reponame').value.trim();
+            const tip = document.getElementById('copy-tip');
+            if (!username || !reponame) {
+                tip.textContent = '请填写用户名和仓库名！';
+                tip.style.color = '#ff3b30';
+                return;
+            }
+            const baseUrl = type === 'gitee' ? 'https://gitee.com/' : 'https://github.com/';
+            const repoUrl = `${baseUrl}${username}/${reponame}`;
+            navigator.clipboard.writeText(repoUrl).then(() => {
+                tip.textContent = `✅ 已复制${type === 'gitee' ? 'Gitee' : 'GitHub'}仓库链接`;
+                tip.style.color = '#4cd964';
+            }).catch(err => {
+                tip.textContent = '❌ 复制失败，请手动复制';
+                tip.style.color = '#ff3b30';
+                console.error(err);
+            });
+            setTimeout(() => {
+                tip.textContent = '';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
