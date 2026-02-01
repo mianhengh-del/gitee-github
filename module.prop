@@ -1,0 +1,7 @@
+id=gitee_github_jumper
+name=Gitee-GitHub 快速跳转工具
+version=1.0
+versionCode=1
+author=酷安@肚子好涨涨
+description=KernelSU内直接打开，支持跳转/深色模式/增删自定义平台/仓库链接复制
+minKernelSUVersion=10600
